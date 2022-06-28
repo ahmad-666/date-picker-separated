@@ -1,0 +1,183 @@
+//Global Styles-------------------------------
+//Global Styles-------------------------------
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  // word-break: break-word;
+  &::before,
+  &::after {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+}
+html {
+  overflow-y: initial !important;
+  overflow-x: initial !important;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  // font-size: 10px;
+  overflow-x: hidden;
+}
+body.hide-scroll {
+  overflow: hidden;
+}
+a {
+  text-decoration: none;
+  cursor: pointer;
+}
+ul {
+  list-style: none;
+}
+button {
+  border: none;
+  cursor: pointer;
+  &:focus {
+    outline: none;
+  }
+}
+input,
+textarea {
+  border: none;
+  &:focus {
+    outline: none;
+  }
+}
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+input[type='tel'],
+input[type='number'],
+input[type='email'],
+input[type='date'] {
+  direction: ltr !important;
+}
+
+body .v-application p {
+  margin-bottom: 0px;
+}
+
+.v-list-item__title,
+.v-list-item__subtitle {
+  white-space: initial !important;
+}
+.container {
+  max-width: initial !important;
+}
+.width-100 {
+  width: 100% !important;
+}
+
+.height-100 {
+  height: 100% !important;
+}
+
+.z-index-1 {
+  z-index: 1 !important;
+}
+.z-index-2 {
+  z-index: 2 !important;
+}
+.z-index-3 {
+  z-index: 3 !important;
+}
+.z-index-4 {
+  z-index: 4 !important;
+}
+.z-index-5 {
+  z-index: 5 !important;
+}
+.position-relative {
+  position: relative !important;
+}
+.position-absolute {
+  position: absolute !important;
+}
+.cursor-pointer {
+  cursor: pointer !important;
+}
+.direction-ltr {
+  direction: ltr !important;
+}
+.direction-rtl {
+  direction: rtl !important;
+}
+.pointer-events-none {
+  pointer-events: none !important;
+}
+.pointer-events-initial {
+  pointer-events: initial !important;
+}
+.overflow-hidden {
+  overflow: hidden !important;
+}
+.overflow-auto {
+  overflow: auto !important;
+}
+.opacity-1 {
+  opacity: 1 !important;
+}
+.opacity-0 {
+  opacity: 0 !important;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #ff9800;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #d18411;
+}
+.custom-scroll {
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: orange;
+    border-radius: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: #4a495b;
+  }
+  & {
+    //just for firefox
+    scrollbar-width: thin; //thin | auto
+    scrollbar-color: orange #4a495b; //first scrollbar , second track
+  }
+}
+.input-ltr {
+  input {
+    direction: ltr !important;
+  }
+}
+.main-container {
+  width: 95% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+@media screen and (max-width: 1300px) {
+  .main-container {
+    width: 90% !important;
+  }
+}
+@media screen and (max-width: 750px) {
+  .main-container {
+    width: 95% !important;
+  }
+}
