@@ -461,16 +461,16 @@ export default {
       this.$emit('input', null)
     },
     dayChange() {
-      if (this.type === 'jalali') this.$refs.month.focus()
-      else return null
+      if (!this.year) this.$refs.year.focus()
+      else if (!this.month) this.$refs.month.focus()
     },
     monthChange() {
-      if (this.type === 'jalali') this.$refs.year.focus()
-      else return this.$refs.day.focus()
+      if (!this.day) this.$refs.day.focus()
+      else if (!this.year) this.$refs.year.focus()
     },
     yearChange() {
-      if (this.type === 'jalali') return null
-      else this.$refs.month.focus()
+      if (!this.month) this.$refs.month.focus()
+      else if (!this.day) this.$refs.day.focus()
     },
   },
 }
