@@ -32,6 +32,7 @@
         :style="{
           'flex-grow': 1,
         }"
+        class="form-elm-direction-ltr"
         @change="dayChange"
       ></v-autocomplete>
       <v-divider vertical class="flex-shrink-0 mx-2"></v-divider>
@@ -66,6 +67,7 @@
         :reverse="type !== 'jalali'"
         :rules="rules.isRequired"
         :no-data-text="noDataText"
+        class="form-elm-direction-ltr"
         :menu-props="{
           contentClass: 'direction-ltr',
         }"
@@ -474,10 +476,12 @@ export default {
 }
 </script>
 <style lang="scss">
-.direction-ltr {
+.direction-ltr,
+.form-elm-direction-ltr input {
   direction: ltr !important;
 }
-.direction-rtl {
+.direction-rtl,
+.form-elm-direction-rtl input {
   direction: rtl !important;
 }
 </style>
