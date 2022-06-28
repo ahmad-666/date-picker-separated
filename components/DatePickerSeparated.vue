@@ -35,7 +35,7 @@
         class="form-elm-direction-ltr"
         @change="dayChange"
       ></v-autocomplete>
-      <v-divider vertical class="flex-shrink-0 mx-2"></v-divider>
+      <v-divider vertical class="flex-shrink-0 mx-0 mx-md-2"></v-divider>
       <v-autocomplete
         ref="month"
         v-model="month"
@@ -55,7 +55,7 @@
         }"
         @change="monthChange"
       ></v-autocomplete>
-      <v-divider vertical class="flex-shrink-0 mx-2"></v-divider>
+      <v-divider vertical class="flex-shrink-0 mx-0 mx-md-2"></v-divider>
       <v-autocomplete
         ref="year"
         v-model="year"
