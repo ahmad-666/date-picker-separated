@@ -16,6 +16,7 @@
       }"
     >
       <v-autocomplete
+        ref="day"
         v-model="day"
         :items="days"
         :label="type === 'jalali' ? 'روز' : 'day'"
@@ -31,9 +32,11 @@
         :style="{
           'flex-grow': 1,
         }"
+        @change="dayChange"
       ></v-autocomplete>
       <v-divider vertical class="flex-shrink-0 mx-2"></v-divider>
       <v-autocomplete
+        ref="month"
         v-model="month"
         :items="months"
         :label="type === 'jalali' ? 'ماه' : 'month'"
@@ -49,9 +52,11 @@
         :style="{
           'flex-grow': 2,
         }"
+        @change="monthChange"
       ></v-autocomplete>
       <v-divider vertical class="flex-shrink-0 mx-2"></v-divider>
       <v-autocomplete
+        ref="year"
         v-model="year"
         :items="years"
         :label="type === 'jalali' ? 'سال' : 'year'"
@@ -67,6 +72,7 @@
         :style="{
           'flex-grow': 1,
         }"
+        @change="yearChange"
       ></v-autocomplete>
     </div>
     <v-alert
@@ -451,6 +457,18 @@ export default {
       this.day = null
       await this.$nextTick()
       this.$emit('input', null)
+    },
+    dayChange() {
+      if (this.type === 'jalali') this.$refs.month.focus()
+      else return null
+    },
+    monthChange() {
+      if (this.type === 'jalali') this.$refs.year.focus()
+      else return this.$refs.day.focus()
+    },
+    yearChange() {
+      if (this.type === 'jalali') return null
+      else this.$refs.month.focus()
     },
   },
 }
