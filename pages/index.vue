@@ -9,6 +9,7 @@
       <date-picker-separated
         v-model="date"
         title="date"
+        type="jalali"
         is-required
         clearable
         min="1395/10/10"

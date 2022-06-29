@@ -27,6 +27,7 @@
         :no-data-text="noDataText"
         :menu-props="{
           contentClass: 'direction-ltr',
+          value: showDayMenu,
         }"
         :reverse="type !== 'jalali'"
         :style="{
@@ -34,6 +35,8 @@
         }"
         class="form-elm-direction-ltr"
         @change="dayChange"
+        @blur="dayBlur"
+        @focus="dayFocus"
       ></v-autocomplete>
       <v-divider vertical class="flex-shrink-0 mx-0 mx-md-2"></v-divider>
       <v-autocomplete
@@ -48,12 +51,15 @@
         :no-data-text="noDataText"
         :menu-props="{
           contentClass: type === 'jalali' ? 'direction-rtl' : 'direction-ltr',
+          value: showMonthMenu,
         }"
         :reverse="type !== 'jalali'"
         :style="{
           'flex-grow': 2,
         }"
         @change="monthChange"
+        @blur="monthBlur"
+        @focus="monthFocus"
       ></v-autocomplete>
       <v-divider vertical class="flex-shrink-0 mx-0 mx-md-2"></v-divider>
       <v-autocomplete
@@ -70,11 +76,14 @@
         class="form-elm-direction-ltr"
         :menu-props="{
           contentClass: 'direction-ltr',
+          value: showYearMenu,
         }"
         :style="{
           'flex-grow': 1,
         }"
         @change="yearChange"
+        @blur="yearBlur"
+        @focus="yearFocus"
       ></v-autocomplete>
     </div>
     <v-alert
@@ -151,6 +160,9 @@ export default {
       year: null,
       month: null,
       day: null,
+      showYearMenu: false,
+      showMonthMenu: false,
+      showDayMenu: false,
       rules: {
         isRequired: [],
       },
@@ -460,17 +472,53 @@ export default {
       await this.$nextTick()
       this.$emit('input', null)
     },
-    dayChange() {
-      if (!this.year) this.$refs.year.focus()
-      else if (!this.month) this.$refs.month.focus()
+    yearChange() {
+      this.showYearMenu = false
+      if (!this.month) {
+        this.$refs.month.focus()
+        this.showMonthMenu = true
+      } else if (!this.day) {
+        this.$refs.day.focus()
+        this.showDayMenu = true
+      }
+    },
+    yearFocus() {
+      this.showYearMenu = true
+    },
+    yearBlur() {
+      this.showYearMenu = false
     },
     monthChange() {
-      if (!this.day) this.$refs.day.focus()
-      else if (!this.year) this.$refs.year.focus()
+      this.showMonthMenu = false
+      if (!this.day) {
+        this.$refs.day.focus()
+        this.showDayMenu = true
+      } else if (!this.year) {
+        this.$refs.year.focus()
+        this.showYearMenu = true
+      }
     },
-    yearChange() {
-      if (!this.month) this.$refs.month.focus()
-      else if (!this.day) this.$refs.day.focus()
+    monthFocus() {
+      this.showMonthMenu = true
+    },
+    monthBlur() {
+      this.showMonthMenu = false
+    },
+    dayChange() {
+      this.showDayMenu = false
+      if (!this.year) {
+        this.$refs.year.focus()
+        this.showYearMenu = true
+      } else if (!this.month) {
+        this.$refs.month.focus()
+        this.showMonthMenu = true
+      }
+    },
+    dayFocus() {
+      this.showDayMenu = true
+    },
+    dayBlur() {
+      this.showDayMenu = false
     },
   },
 }
