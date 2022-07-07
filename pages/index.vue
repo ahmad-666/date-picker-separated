@@ -6,7 +6,7 @@
           v-model="date"
           type="gregory"
           display-type="jalali"
-          is-required
+          :is-required="true"
           :min="min"
           :max="max"
         ></date-picker-separated>
@@ -23,8 +23,8 @@ export default {
       // min: '1395/10/10',
       // max: '1405/10/10',
       date: null,
-      min: null,
-      max: null,
+      min: '2019/10/10',
+      max: '2023/10/10',
     }
   },
 }

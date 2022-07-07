@@ -411,30 +411,26 @@ export default {
                 `${this.year}/${this.month}`,
                 `${this.yearFormat}/${this.monthFormat}`
               ).daysInMonth()
+
         for (let i = 1; i <= daysInMonth; i++) {
+          const value = i < 10 ? `0${i}` : i.toString()
+          const isLessThanMin =
+            (+this.year <= this.minYear && +this.month < this.minMonth) ||
+            (+this.year <= this.minYear &&
+              +this.month === this.minMonth &&
+              +value < this.minDay)
+          const isMoreThanMax =
+            (+this.year >= this.maxYear && +this.month > this.maxMonth) ||
+            (+this.year >= this.maxYear &&
+              +this.month === this.maxMonth &&
+              +value > this.maxDay)
           days.push({
-            value: i < 10 ? `0${i}` : i.toString(),
+            value,
             text: i.toString(),
+            disabled: isLessThanMin || isMoreThanMax,
           })
         }
-        if (+this.year === this.minYear && +this.month === this.minMonth) {
-          return days.map((d) => {
-            return {
-              ...d,
-              disabled: +d.value < this.minDay,
-            }
-          })
-        } else if (
-          +this.year === this.maxYear &&
-          +this.month === this.maxMonth
-        ) {
-          return days.map((d) => {
-            return {
-              ...d,
-              disabled: +d.value > this.maxDay,
-            }
-          })
-        } else return days
+        return days
       }
     },
     localValue() {
