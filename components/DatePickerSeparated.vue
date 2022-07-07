@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div class="d-flex justify-space-between align-center flex-wrap">
+    <div
+      v-if="clearable && title"
+      class="d-flex justify-space-between align-center flex-wrap mb-2"
+    >
       <p class="text-subtitle-1 textColor--text">
         {{ title }}
       </p>
@@ -8,84 +11,109 @@
         <v-icon size="20" color="textColor">mdi-close</v-icon>
       </v-btn>
     </div>
-    <div
-      class="mt-2 rounded-lg d-flex align-stretch"
-      :style="{
-        height,
-        border: `1px solid ${textColor}`,
-      }"
-    >
+    <div class="d-flex flex-nowrap align-stretch">
       <v-autocomplete
         ref="day"
         v-model="day"
         :items="days"
         :label="type === 'jalali' ? 'روز' : 'day'"
-        solo
-        flat
+        outlined
+        class="form-elm-direction-ltr date-picker-form-elm rounded-r-lg rounded-l-0"
+        :class="{
+          [`${fontCssClass}`]: true,
+        }"
+        :style="{
+          width: '25%',
+        }"
+        :height="height"
+        hide-details
+        :dense="dense"
         background-color="transparent"
-        :rules="rules.isRequired"
         :no-data-text="noDataText"
         :menu-props="{
-          contentClass: 'direction-ltr',
+          contentClass: 'direction-ltr date-separated-menu',
           value: showDayMenu,
         }"
         :reverse="type !== 'jalali'"
-        :style="{
-          'flex-grow': 1,
-        }"
-        class="form-elm-direction-ltr"
         @change="dayChange"
         @blur="dayBlur"
         @focus="dayFocus"
       ></v-autocomplete>
-      <v-divider vertical class="flex-shrink-0 mx-0 mx-md-2"></v-divider>
+      <!-- <v-divider
+        vertical
+        class="flex-shrink-0 35543535435"
+        :style="{
+          height,
+        }"
+      ></v-divider> -->
       <v-autocomplete
         ref="month"
         v-model="month"
         :items="months"
         :label="type === 'jalali' ? 'ماه' : 'month'"
         background-color="transparent"
-        solo
-        flat
-        :rules="rules.isRequired"
+        outlined
+        :height="height"
+        :dense="dense"
         :no-data-text="noDataText"
+        class="date-picker-form-elm rounded-0"
+        hide-details
+        :class="{
+          [`${fontCssClass}`]: true,
+        }"
         :menu-props="{
-          contentClass: type === 'jalali' ? 'direction-rtl' : 'direction-ltr',
+          contentClass:
+            type === 'jalali'
+              ? 'direction-rtl date-separated-menu'
+              : 'direction-ltr date-separated-menu',
           value: showMonthMenu,
         }"
         :reverse="type !== 'jalali'"
         :style="{
-          'flex-grow': 2,
+          width: '45%',
         }"
         @change="monthChange"
         @blur="monthBlur"
         @focus="monthFocus"
       ></v-autocomplete>
-      <v-divider vertical class="flex-shrink-0 mx-0 mx-md-2"></v-divider>
+      <!-- <v-divider
+        vertical
+        class="flex-shrink-0"
+        :style="{
+          height,
+        }"
+      ></v-divider> -->
       <v-autocomplete
         ref="year"
         v-model="year"
         :items="years"
         :label="type === 'jalali' ? 'سال' : 'year'"
         background-color="transparent"
-        solo
-        flat
+        outlined
+        :height="height"
+        :dense="dense"
+        hide-details
         :reverse="type !== 'jalali'"
-        :rules="rules.isRequired"
         :no-data-text="noDataText"
-        class="form-elm-direction-ltr"
+        class="form-elm-direction-ltr date-picker-form-elm rounded-l-lg rounded-r-0"
+        :class="{
+          [`${fontCssClass}`]: true,
+        }"
         :menu-props="{
-          contentClass: 'direction-ltr',
+          contentClass: 'direction-ltr date-separated-menu',
           value: showYearMenu,
         }"
         :style="{
-          'flex-grow': 1,
+          width: '30%',
         }"
         @change="yearChange"
         @blur="yearBlur"
         @focus="yearFocus"
       ></v-autocomplete>
     </div>
+    <p v-if="errorMsg" class="mt-2 error--text text-caption">
+      {{ errorMsg }}
+    </p>
     <v-alert
       v-model="showAlert"
       class="mt-5"
@@ -104,20 +132,20 @@
 </template>
 <script>
 // we work with 'YYYY/MM/DD' format in this component
-import { isRequired } from '~/utils/formValidation'
+// import { isRequired } from '~/utils/formValidation'
 export default {
   props: {
     title: {
       type: String,
-      required: true,
+      default: null,
+      validator: (val) => {
+        if (val === null || typeof val === 'string') return true
+        return false
+      },
     },
     isRequired: {
       type: Boolean,
       default: false,
-    },
-    height: {
-      type: String,
-      default: '55px',
     },
     clearable: {
       type: Boolean,
@@ -151,6 +179,18 @@ export default {
         return false
       },
     },
+    dense: {
+      type: Boolean,
+      default: false,
+    },
+    height: {
+      type: String,
+      default: '55px',
+    },
+    fontCssClass: {
+      type: String,
+      default: 'text-body-2',
+    },
   },
   emits: ['input'],
   data() {
@@ -169,6 +209,10 @@ export default {
     }
   },
   computed: {
+    errorMsg() {
+      if (!this.isRequired || (this.day && this.month && this.year)) return null
+      else return 'باید تمام مقادیر وارد کنید'
+    },
     theme() {
       return this.$vuetify.theme.dark === true ? 'dark' : 'light'
     },
@@ -406,13 +450,13 @@ export default {
     },
   },
   watch: {
-    isRequired: {
-      immediate: true,
-      handler(val) {
-        if (val) this.rules.isRequired = [isRequired]
-        else this.rules.isRequired = []
-      },
-    },
+    // isRequired: {
+    //   immediate: true,
+    //   handler(val) {
+    //     if (val) this.rules.isRequired = [isRequired]
+    //     else this.rules.isRequired = []
+    //   },
+    // },
     value: {
       immediate: true,
       handler(val) {
@@ -549,5 +593,18 @@ export default {
 .direction-rtl,
 .form-elm-direction-rtl input {
   direction: rtl !important;
+}
+.date-picker-form-elm {
+  .v-input__slot {
+    padding: 00px 5px 0px 0px !important;
+  }
+  input {
+    min-width: initial !important;
+  }
+}
+.date-separated-menu {
+  .v-list-item {
+    padding: 0px 6px !important;
+  }
 }
 </style>
