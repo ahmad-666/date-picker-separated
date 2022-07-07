@@ -473,7 +473,13 @@ export default {
       this.$emit('input', null)
     },
     yearChange() {
-      this.showYearMenu = false
+      if (this.year) {
+        this.showYearMenu = false
+        this.$refs.year.blur()
+      } else {
+        this.showYearMenu = true
+        this.$refs.year.focus()
+      }
       if (!this.month) {
         this.$refs.month.focus()
         this.showMonthMenu = true
@@ -489,7 +495,13 @@ export default {
       this.showYearMenu = false
     },
     monthChange() {
-      this.showMonthMenu = false
+      if (this.month) {
+        this.showMonthMenu = false
+        this.$refs.month.blur()
+      } else {
+        this.showMonthMenu = true
+        this.$refs.month.focus()
+      }
       if (!this.day) {
         this.$refs.day.focus()
         this.showDayMenu = true
@@ -505,7 +517,13 @@ export default {
       this.showMonthMenu = false
     },
     dayChange() {
-      this.showDayMenu = false
+      if (this.day) {
+        this.showDayMenu = false
+        this.$refs.day.blur()
+      } else {
+        this.showDayMenu = true
+        this.$refs.day.focus()
+      }
       if (!this.year) {
         this.$refs.year.focus()
         this.showYearMenu = true
