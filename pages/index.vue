@@ -23,8 +23,8 @@ export default {
       // min: '1395/10/10',
       // max: '1405/10/10',
       date: null,
-      min: '2018/10/10',
-      max: '2024/10/10',
+      min: null,
+      max: null,
     }
   },
 }

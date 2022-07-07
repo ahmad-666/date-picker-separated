@@ -42,7 +42,6 @@
       <v-autocomplete
         ref="month"
         v-model="month"
-        autofocus
         :items="months"
         :label="displayType === 'jalali' ? 'ماه' : 'month'"
         background-color="transparent"
@@ -543,24 +542,6 @@ export default {
       this.$refs.day.isMenuActive = false
       this.showDayMenu = false
     },
-    //  yearFocus() {
-    //   this.showYearMenu = true
-    // },
-    // yearBlur() {
-    //   this.showYearMenu = false
-    // },
-    // monthFocus() {
-    //   this.showMonthMenu = true
-    // },
-    // monthBlur() {
-    //   this.showMonthMenu = false
-    // },
-    // dayFocus() {
-    //   this.showDayMenu = true
-    // },
-    // dayBlur() {
-    //   this.showDayMenu = false
-    // },
     yearChange() {
       if (this.year) {
         this.yearBlur()
