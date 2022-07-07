@@ -16,7 +16,7 @@
         ref="day"
         v-model="day"
         :items="days"
-        :label="type === 'jalali' ? 'روز' : 'day'"
+        :label="displayType === 'jalali' ? 'روز' : 'day'"
         outlined
         class="form-elm-direction-ltr date-picker-form-elm rounded-r-lg rounded-l-0"
         :class="{
@@ -34,23 +34,17 @@
           contentClass: 'direction-ltr date-separated-menu',
           value: showDayMenu,
         }"
-        :reverse="type !== 'jalali'"
+        :reverse="displayType !== 'jalali'"
         @change="dayChange"
         @blur="dayBlur"
         @focus="dayFocus"
       ></v-autocomplete>
-      <!-- <v-divider
-        vertical
-        class="flex-shrink-0 35543535435"
-        :style="{
-          height,
-        }"
-      ></v-divider> -->
       <v-autocomplete
         ref="month"
         v-model="month"
+        autofocus
         :items="months"
-        :label="type === 'jalali' ? 'ماه' : 'month'"
+        :label="displayType === 'jalali' ? 'ماه' : 'month'"
         background-color="transparent"
         outlined
         :height="height"
@@ -63,12 +57,12 @@
         }"
         :menu-props="{
           contentClass:
-            type === 'jalali'
+            displayType === 'jalali'
               ? 'direction-rtl date-separated-menu'
               : 'direction-ltr date-separated-menu',
           value: showMonthMenu,
         }"
-        :reverse="type !== 'jalali'"
+        :reverse="displayType !== 'jalali'"
         :style="{
           width: '45%',
         }"
@@ -76,24 +70,17 @@
         @blur="monthBlur"
         @focus="monthFocus"
       ></v-autocomplete>
-      <!-- <v-divider
-        vertical
-        class="flex-shrink-0"
-        :style="{
-          height,
-        }"
-      ></v-divider> -->
       <v-autocomplete
         ref="year"
         v-model="year"
         :items="years"
-        :label="type === 'jalali' ? 'سال' : 'year'"
+        :label="displayType === 'jalali' ? 'سال' : 'year'"
         background-color="transparent"
         outlined
         :height="height"
         :dense="dense"
         hide-details
-        :reverse="type !== 'jalali'"
+        :reverse="displayType !== 'jalali'"
         :no-data-text="noDataText"
         class="form-elm-direction-ltr date-picker-form-elm rounded-l-lg rounded-r-0"
         :class="{
@@ -160,8 +147,12 @@ export default {
       },
     },
     type: {
-      type: String, // 'jalali','gregorian'
-      default: 'jalali',
+      type: String, // 'jalali','gregory'
+      default: 'gregory',
+    },
+    displayType: {
+      type: String, // 'jalali','gregory'
+      default: 'gregory',
     },
     min: {
       type: String,
@@ -220,36 +211,42 @@ export default {
       return this.$vuetify.theme.themes[this.theme].textColor
     },
     noDataText() {
-      if (this.type === 'jalali') return 'نتیجه ای پیدا نشد'
+      if (this.displayType === 'jalali') return 'نتیجه ای پیدا نشد'
       else return 'no data available'
     },
     minDate() {
-      if (this.min) return this.min
-      else
+      if (this.min) {
+        return this.$moment(this.min, this.modelFormat).format(this.format)
+      } else
         return this.$moment().clone().subtract(100, 'year').format(this.format)
     },
     maxDate() {
-      if (this.max) return this.max
+      if (this.max)
+        return this.$moment(this.max, this.modelFormat).format(this.format)
       else return this.$moment().clone().add(100, 'year').format(this.format)
     },
     format() {
+      if (this.displayType === 'jalali') return 'jYYYY/jMM/jDD'
+      else return 'YYYY/MM/DD'
+    },
+    modelFormat() {
       if (this.type === 'jalali') return 'jYYYY/jMM/jDD'
       else return 'YYYY/MM/DD'
     },
     yearFormat() {
-      if (this.type === 'jalali') return 'jYYYY'
+      if (this.displayType === 'jalali') return 'jYYYY'
       else return 'YYYY'
     },
     monthFormat() {
-      if (this.type === 'jalali') return 'jMM'
+      if (this.displayType === 'jalali') return 'jMM'
       else return 'MM'
     },
     monthNameFormat() {
-      if (this.type === 'jalali') return 'jMMMM'
+      if (this.displayType === 'jalali') return 'jMMMM'
       else return 'MMMM'
     },
     dayFormat() {
-      if (this.type === 'jalali') return 'jDD'
+      if (this.displayType === 'jalali') return 'jDD'
       else return 'DD'
     },
     minYear() {
@@ -278,7 +275,7 @@ export default {
     },
     months() {
       let allMonths = []
-      if (this.type === 'jalali') {
+      if (this.displayType === 'jalali') {
         allMonths = [
           {
             value: '01',
@@ -409,7 +406,7 @@ export default {
         return days
       } else {
         const daysInMonth =
-          this.type === 'jalali'
+          this.displayType === 'jalali'
             ? this.$moment.jDaysInMonth(+this.year, +this.month - 1)
             : this.$moment(
                 `${this.year}/${this.month}`,
@@ -465,7 +462,7 @@ export default {
           this.month = null
           this.day = null
         } else {
-          const m = this.$moment(val, this.format)
+          const m = this.$moment(val, this.modelFormat)
           this.year = m.format(this.yearFormat).toString()
           this.month = m.format(this.monthFormat).toString()
           this.day = m.format(this.dayFormat).toString()
@@ -501,7 +498,7 @@ export default {
             } else {
               this.showAlert = false
               this.alertText = null
-              this.$emit('input', newDate)
+              this.$emit('input', m.format(this.modelFormat))
             }
           }
         }
@@ -516,71 +513,89 @@ export default {
       await this.$nextTick()
       this.$emit('input', null)
     },
-    yearChange() {
-      if (this.year) {
-        this.showYearMenu = false
-        this.$refs.year.blur()
-      } else {
-        this.showYearMenu = true
-        this.$refs.year.focus()
-      }
-      if (!this.month) {
-        this.$refs.month.focus()
-        this.showMonthMenu = true
-      } else if (!this.day) {
-        this.$refs.day.focus()
-        this.showDayMenu = true
-      }
-    },
     yearFocus() {
+      this.$refs.year.focus()
+      this.$refs.year.isMenuActive = true
       this.showYearMenu = true
     },
     yearBlur() {
+      this.$refs.year.blur()
+      this.$refs.year.isMenuActive = false
       this.showYearMenu = false
     },
-    monthChange() {
-      if (this.month) {
-        this.showMonthMenu = false
-        this.$refs.month.blur()
-      } else {
-        this.showMonthMenu = true
-        this.$refs.month.focus()
-      }
-      if (!this.day) {
-        this.$refs.day.focus()
-        this.showDayMenu = true
-      } else if (!this.year) {
-        this.$refs.year.focus()
-        this.showYearMenu = true
-      }
-    },
     monthFocus() {
+      this.$refs.month.focus()
+      this.$refs.month.isMenuActive = true
       this.showMonthMenu = true
     },
     monthBlur() {
+      this.$refs.month.blur()
+      this.$refs.month.isMenuActive = false
       this.showMonthMenu = false
     },
-    dayChange() {
-      if (this.day) {
-        this.showDayMenu = false
-        this.$refs.day.blur()
-      } else {
-        this.showDayMenu = true
-        this.$refs.day.focus()
-      }
-      if (!this.year) {
-        this.$refs.year.focus()
-        this.showYearMenu = true
-      } else if (!this.month) {
-        this.$refs.month.focus()
-        this.showMonthMenu = true
-      }
-    },
     dayFocus() {
+      this.$refs.day.focus()
+      this.$refs.day.isMenuActive = true
       this.showDayMenu = true
     },
     dayBlur() {
+      this.$refs.day.blur()
+      this.$refs.day.isMenuActive = false
       this.showDayMenu = false
+    },
+    //  yearFocus() {
+    //   this.showYearMenu = true
+    // },
+    // yearBlur() {
+    //   this.showYearMenu = false
+    // },
+    // monthFocus() {
+    //   this.showMonthMenu = true
+    // },
+    // monthBlur() {
+    //   this.showMonthMenu = false
+    // },
+    // dayFocus() {
+    //   this.showDayMenu = true
+    // },
+    // dayBlur() {
+    //   this.showDayMenu = false
+    // },
+    yearChange() {
+      if (this.year) {
+        this.yearBlur()
+      } else {
+        this.yearFocus()
+      }
+      if (!this.month) {
+        this.monthFocus()
+      } else if (!this.day) {
+        this.dayFocus()
+      }
+    },
+    monthChange() {
+      if (this.month) {
+        this.monthBlur()
+      } else {
+        this.monthFocus()
+      }
+      if (!this.day) {
+        this.dayFocus()
+      } else if (!this.year) {
+        this.yearFocus()
+      }
+    },
+    dayChange() {
+      if (this.day) {
+        this.dayBlur()
+      } else {
+        this.dayFocus()
+      }
+      if (!this.year) {
+        this.yearFocus()
+      } else if (!this.month) {
+        this.monthFocus()
+      }
     },
   },
 }
@@ -596,7 +611,7 @@ export default {
 }
 .date-picker-form-elm {
   .v-input__slot {
-    padding: 00px 5px 0px 0px !important;
+    padding: 0px 5px !important;
   }
   input {
     min-width: initial !important;
@@ -604,7 +619,7 @@ export default {
 }
 .date-separated-menu {
   .v-list-item {
-    padding: 0px 6px !important;
+    padding: 0px 5px !important;
   }
 }
 </style>

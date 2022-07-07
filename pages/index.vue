@@ -1,14 +1,14 @@
 <template>
   <div>
     <v-row class="mt-15 mr-15">
-      <v-col cols="3">
+      <v-col cols="12" md="3" lg="3">
         <date-picker-separated
           v-model="date"
-          type="jalali"
+          type="gregory"
+          display-type="jalali"
           is-required
-          height="55px"
-          min="1395/10/10"
-          max="1405/01/01"
+          :min="min"
+          :max="max"
         ></date-picker-separated>
       </v-col>
     </v-row>
@@ -19,7 +19,12 @@ export default {
   name: 'IndexPage',
   data() {
     return {
-      date: '1400/10/10',
+      // date: '1400/10/10',
+      // min: '1395/10/10',
+      // max: '1405/10/10',
+      date: null,
+      min: '2018/10/10',
+      max: '2024/10/10',
     }
   },
 }
