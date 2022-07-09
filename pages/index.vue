@@ -6,7 +6,7 @@
       class="d-block"
       @submit.prevent="submitHandler"
     >
-      <v-container :style="{ width: containerWidth }" class="mx-auto">
+      <v-container>
         <v-row>
           <v-col cols="12" sm="6" md="3">
             <date-picker-separated

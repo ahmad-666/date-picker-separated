@@ -26,13 +26,10 @@
         :label="displayType === 'jalali' ? 'روز' : 'day'"
         outlined
         class="form-elm-direction-ltr date-picker-form-elm day rounded-r-lg rounded-l-0"
-        :class="{
-          [`${fontCssClass}`]: true,
-        }"
-        :style="{
-          width: '25%',
-        }"
         :height="height"
+        :style="{
+          flex: '4 1 0 !important',
+        }"
         :dense="dense"
         background-color="transparent"
         :no-data-text="noDataText"
@@ -50,6 +47,9 @@
       <v-autocomplete
         ref="month"
         v-model="month"
+        :style="{
+          flex: '7 1 0 !important',
+        }"
         :search-input.sync="monthSearch"
         hide-details
         :items="months"
@@ -61,9 +61,6 @@
         :dense="dense"
         :no-data-text="noDataText"
         class="date-picker-form-elm month rounded-0"
-        :class="{
-          [`${fontCssClass}`]: true,
-        }"
         :menu-props="{
           contentClass:
             displayType === 'jalali'
@@ -72,9 +69,6 @@
           value: showMonthMenu,
         }"
         :reverse="displayType !== 'jalali'"
-        :style="{
-          width: '45%',
-        }"
         @update:search-input="monthSearchHandler"
         @change="monthChange"
         @blur="monthBlur"
@@ -83,6 +77,9 @@
       <v-autocomplete
         ref="year"
         v-model="year"
+        :style="{
+          flex: '5 1 0 !important',
+        }"
         :search-input.sync="yearSearch"
         hide-details
         :rules="rules"
@@ -95,15 +92,9 @@
         :reverse="displayType !== 'jalali'"
         :no-data-text="noDataText"
         class="form-elm-direction-ltr date-picker-form-elm year rounded-l-lg rounded-r-0"
-        :class="{
-          [`${fontCssClass}`]: true,
-        }"
         :menu-props="{
           contentClass: 'direction-ltr date-separated-menu',
           value: showYearMenu,
-        }"
-        :style="{
-          width: '30%',
         }"
         @update:search-input="yearSearchHandler"
         @change="yearChange"
@@ -185,10 +176,6 @@ export default {
     height: {
       type: String,
       default: '55px',
-    },
-    fontCssClass: {
-      type: String,
-      default: 'text-caption',
     },
     jalaliFormat: {
       type: String,
@@ -654,23 +641,38 @@ export default {
     min-width: initial !important;
   }
 }
-.date-picker-form-elm.day {
-  input {
-    width: 25px !important;
-    // min-width: 25px !important;
+// .date-picker-form-elm.day {
+//   input {
+//     width: 25px !important;
+//     // min-width: 25px !important;
+//   }
+// }
+
+.jalali-date-picker-separated {
+  .date-picker-form-elm {
+    .v-input__append-inner {
+      position: absolute;
+      left: -16px;
+    }
+  }
+  .date-picker-form-elm.form-elm-direction-ltr {
+    input {
+      left: 5px;
+    }
   }
 }
-.date-picker-form-elm.month {
-  input {
-    width: 60px !important;
-    // min-width: 60px !important;
+.gregory-date-picker-separated {
+  .date-picker-form-elm {
+    .v-input__append-inner {
+      position: absolute;
+      right: -16px;
+    }
   }
-}
-.date-picker-form-elm.year {
-  input {
-    width: 32px !important;
-    // min-width: 30px !important;
-  }
+  // .date-picker-form-elm.form-elm-direction-ltr {
+  //   input {
+  //     left: 5px;
+  //   }
+  // }
 }
 .date-separated-menu {
   .v-list-item {
