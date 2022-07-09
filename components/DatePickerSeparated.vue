@@ -15,6 +15,7 @@
       <v-autocomplete
         ref="day"
         v-model="day"
+        hide-details
         :items="days"
         :label="displayType === 'jalali' ? 'روز' : 'day'"
         outlined
@@ -26,7 +27,6 @@
           width: '25%',
         }"
         :height="height"
-        hide-details
         :dense="dense"
         background-color="transparent"
         :no-data-text="noDataText"
@@ -35,6 +35,7 @@
           value: showDayMenu,
         }"
         :reverse="displayType !== 'jalali'"
+        :rules="rules"
         @change="dayChange"
         @blur="dayBlur"
         @focus="dayFocus"
@@ -42,15 +43,16 @@
       <v-autocomplete
         ref="month"
         v-model="month"
+        hide-details
         :items="months"
         :label="displayType === 'jalali' ? 'ماه' : 'month'"
         background-color="transparent"
         outlined
         :height="height"
+        :rules="rules"
         :dense="dense"
         :no-data-text="noDataText"
         class="date-picker-form-elm rounded-0"
-        hide-details
         :class="{
           [`${fontCssClass}`]: true,
         }"
@@ -72,13 +74,14 @@
       <v-autocomplete
         ref="year"
         v-model="year"
+        hide-details
+        :rules="rules"
         :items="years"
         :label="displayType === 'jalali' ? 'سال' : 'year'"
         background-color="transparent"
         outlined
         :height="height"
         :dense="dense"
-        hide-details
         :reverse="displayType !== 'jalali'"
         :no-data-text="noDataText"
         class="form-elm-direction-ltr date-picker-form-elm rounded-l-lg rounded-r-0"
@@ -117,8 +120,6 @@
   </div>
 </template>
 <script>
-// we work with 'YYYY/MM/DD' format in this component
-// import { isRequired } from '~/utils/formValidation'
 export default {
   props: {
     title: {
@@ -128,10 +129,6 @@ export default {
         if (val === null || typeof val === 'string') return true
         return false
       },
-    },
-    isRequired: {
-      type: Boolean,
-      default: false,
     },
     clearable: {
       type: Boolean,
@@ -181,6 +178,18 @@ export default {
       type: String,
       default: 'text-body-2',
     },
+    jalaliFormat: {
+      type: String,
+      default: 'jYYYY-jMM-jDD',
+    },
+    gregoryFormat: {
+      type: String,
+      default: 'YYYY-MM-DD',
+    },
+    rules: {
+      type: Array,
+      default: () => [],
+    },
   },
   emits: ['input'],
   data() {
@@ -193,15 +202,30 @@ export default {
       showYearMenu: false,
       showMonthMenu: false,
       showDayMenu: false,
-      rules: {
-        isRequired: [],
-      },
+      mounted: false,
     }
   },
   computed: {
+    yearHasError() {
+      if (this.mounted)
+        return this.$refs.year.shouldValidate && this.$refs.year.hasError
+      return null
+    },
+    monthHasError() {
+      if (this.mounted)
+        return this.$refs.month.shouldValidate && this.$refs.month.hasError
+      return null
+    },
+    dayHasError() {
+      if (this.mounted)
+        return this.$refs.day.shouldValidate && this.$refs.day.hasError
+      return null
+    },
     errorMsg() {
-      if (!this.isRequired || (this.day && this.month && this.year)) return null
-      else return 'باید تمام مقادیر وارد کنید'
+      if (this.yearHasError) return 'سال را وارد کنید'
+      if (this.monthHasError) return 'ماه را وارد کنید'
+      else if (this.dayHasError) return 'روز را وارد کنید'
+      else return null
     },
     theme() {
       return this.$vuetify.theme.dark === true ? 'dark' : 'light'
@@ -225,12 +249,12 @@ export default {
       else return this.$moment().clone().add(100, 'year').format(this.format)
     },
     format() {
-      if (this.displayType === 'jalali') return 'jYYYY/jMM/jDD'
-      else return 'YYYY/MM/DD'
+      if (this.displayType === 'jalali') return this.jalaliFormat
+      else return this.gregoryFormat
     },
     modelFormat() {
-      if (this.type === 'jalali') return 'jYYYY/jMM/jDD'
-      else return 'YYYY/MM/DD'
+      if (this.type === 'jalali') return this.jalaliFormat
+      else return this.gregoryFormat
     },
     yearFormat() {
       if (this.displayType === 'jalali') return 'jYYYY'
@@ -442,13 +466,6 @@ export default {
     },
   },
   watch: {
-    // isRequired: {
-    //   immediate: true,
-    //   handler(val) {
-    //     if (val) this.rules.isRequired = [isRequired]
-    //     else this.rules.isRequired = []
-    //   },
-    // },
     value: {
       immediate: true,
       handler(val) {
@@ -473,7 +490,10 @@ export default {
         const newDay = newVal?.day
         if (newYear && newMonth && newDay) {
           const newDate = `${newYear}/${newMonth}/${newDay}`
-          const m = this.$moment(newDate, this.format)
+          const m = this.$moment(
+            newDate,
+            `${this.yearFormat}/${this.monthFormat}/${this.dayFormat}`
+          )
           if (!m.isValid()) {
             this.day = null
           } else {
@@ -500,6 +520,9 @@ export default {
       },
     },
   },
+  mounted() {
+    this.mounted = true
+  },
   methods: {
     async clearHandler() {
       this.year = null
@@ -518,6 +541,7 @@ export default {
       this.$refs.year.isMenuActive = false
       this.showYearMenu = false
     },
+
     monthFocus() {
       this.$refs.month.focus()
       this.$refs.month.isMenuActive = true
@@ -588,7 +612,7 @@ export default {
 }
 .date-picker-form-elm {
   .v-input__slot {
-    padding: 0px 5px !important;
+    padding: 0px 2px !important;
   }
   input {
     min-width: initial !important;
@@ -596,7 +620,7 @@ export default {
 }
 .date-separated-menu {
   .v-list-item {
-    padding: 0px 5px !important;
+    padding: 0px 2px !important;
   }
 }
 </style>
