@@ -46,16 +46,16 @@ export default {
   vuetify: {
     customVariables: ['~/assets/vuetify.scss'],
     treeShake: true,
-    breakpoint: {
-      thresholds: {
-        xs: 500,
-        sm: 750,
-        md: 1100,
-        lg: 1500,
-      },
-      mobileBreakpoint: 'sm',
-      scrollBarWidth: 16,
-    },
+    // breakpoint: {
+    //   thresholds: {
+    //     xs: 500,
+    //     sm: 750,
+    //     md: 1100,
+    //     lg: 1500,
+    //   },
+    //   mobileBreakpoint: 'sm',
+    //   scrollBarWidth: 16,
+    // },
     rtl: true,
     theme: {
       dark: true,

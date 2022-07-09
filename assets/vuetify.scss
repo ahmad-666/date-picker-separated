@@ -1,15 +1,15 @@
 @font-face {
-  src: url('/fonts/iransans.ttf');
+  src: url('/fonts/flyver.ttf');
   font-family: iranSans;
 }
 $body-font-family: iranSans, 'Roboto';
 $font-size-root: 16px;
 $card-elevation: 5;
 $btn-letter-spacing: 0;
-$grid-breakpoints: (
-  'xs': 0,
-  'sm': 500px,
-  'md': 750px,
-  'lg': 1100px - 16px,
-  'xl': 1500px - 16px,
-);
+// $grid-breakpoints: (
+//   'xs': 0,
+//   'sm': 500px,
+//   'md': 750px,
+//   'lg': 1100px - 16px,
+//   'xl': 1500px - 16px,
+// );

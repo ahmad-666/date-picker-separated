@@ -1,5 +1,10 @@
 <template>
-  <div>
+  <div
+    :class="{
+      'gregory-date-picker-separated': displayType === 'gregory',
+      'jalali-date-picker-separated': displayType === 'jalali',
+    }"
+  >
     <div
       v-if="clearable && title"
       class="d-flex justify-space-between align-center flex-wrap mb-2"
@@ -15,11 +20,12 @@
       <v-autocomplete
         ref="day"
         v-model="day"
+        :search-input.sync="daySearch"
         hide-details
         :items="days"
         :label="displayType === 'jalali' ? 'روز' : 'day'"
         outlined
-        class="form-elm-direction-ltr date-picker-form-elm rounded-r-lg rounded-l-0"
+        class="form-elm-direction-ltr date-picker-form-elm day rounded-r-lg rounded-l-0"
         :class="{
           [`${fontCssClass}`]: true,
         }"
@@ -36,6 +42,7 @@
         }"
         :reverse="displayType !== 'jalali'"
         :rules="rules"
+        @update:search-input="daySearchHandler"
         @change="dayChange"
         @blur="dayBlur"
         @focus="dayFocus"
@@ -43,6 +50,7 @@
       <v-autocomplete
         ref="month"
         v-model="month"
+        :search-input.sync="monthSearch"
         hide-details
         :items="months"
         :label="displayType === 'jalali' ? 'ماه' : 'month'"
@@ -52,7 +60,7 @@
         :rules="rules"
         :dense="dense"
         :no-data-text="noDataText"
-        class="date-picker-form-elm rounded-0"
+        class="date-picker-form-elm month rounded-0"
         :class="{
           [`${fontCssClass}`]: true,
         }"
@@ -67,6 +75,7 @@
         :style="{
           width: '45%',
         }"
+        @update:search-input="monthSearchHandler"
         @change="monthChange"
         @blur="monthBlur"
         @focus="monthFocus"
@@ -74,6 +83,7 @@
       <v-autocomplete
         ref="year"
         v-model="year"
+        :search-input.sync="yearSearch"
         hide-details
         :rules="rules"
         :items="years"
@@ -84,7 +94,7 @@
         :dense="dense"
         :reverse="displayType !== 'jalali'"
         :no-data-text="noDataText"
-        class="form-elm-direction-ltr date-picker-form-elm rounded-l-lg rounded-r-0"
+        class="form-elm-direction-ltr date-picker-form-elm year rounded-l-lg rounded-r-0"
         :class="{
           [`${fontCssClass}`]: true,
         }"
@@ -95,10 +105,12 @@
         :style="{
           width: '30%',
         }"
+        @update:search-input="yearSearchHandler"
         @change="yearChange"
         @blur="yearBlur"
         @focus="yearFocus"
-      ></v-autocomplete>
+      >
+      </v-autocomplete>
     </div>
     <p v-if="errorMsg" class="mt-2 error--text text-caption">
       {{ errorMsg }}
@@ -176,7 +188,7 @@ export default {
     },
     fontCssClass: {
       type: String,
-      default: 'text-body-2',
+      default: 'text-caption',
     },
     jalaliFormat: {
       type: String,
@@ -203,6 +215,9 @@ export default {
       showMonthMenu: false,
       showDayMenu: false,
       mounted: false,
+      daySearch: null,
+      monthSearch: null,
+      yearSearch: null,
     }
   },
   computed: {
@@ -524,6 +539,27 @@ export default {
     this.mounted = true
   },
   methods: {
+    daySearchHandler() {
+      if (this.daySearch) {
+        this.daySearch = `${this.daySearch}`.replace(/[۰-۹]/g, (d) =>
+          '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)
+        )
+      } else this.daySearch = null
+    },
+    monthSearchHandler() {
+      if (this.monthSearch) {
+        this.monthSearch = `${this.monthSearch}`.replace(/[۰-۹]/g, (d) =>
+          '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)
+        )
+      } else this.monthSearch = null
+    },
+    yearSearchHandler() {
+      if (this.yearSearch) {
+        this.yearSearch = `${this.yearSearch}`.replace(/[۰-۹]/g, (d) =>
+          '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)
+        )
+      } else this.yearSearch = null
+    },
     async clearHandler() {
       this.year = null
       this.month = null
@@ -611,11 +647,29 @@ export default {
   direction: rtl !important;
 }
 .date-picker-form-elm {
-  .v-input__slot {
-    padding: 0px 2px !important;
-  }
+  // .v-input__slot {
+  //   padding: 0px 2px !important;
+  // }
   input {
     min-width: initial !important;
+  }
+}
+.date-picker-form-elm.day {
+  input {
+    width: 25px !important;
+    // min-width: 25px !important;
+  }
+}
+.date-picker-form-elm.month {
+  input {
+    width: 60px !important;
+    // min-width: 60px !important;
+  }
+}
+.date-picker-form-elm.year {
+  input {
+    width: 32px !important;
+    // min-width: 30px !important;
   }
 }
 .date-separated-menu {

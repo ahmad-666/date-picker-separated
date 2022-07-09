@@ -1,20 +1,40 @@
 <template>
   <div>
-    <v-form ref="myForm" v-model="validity" @submit.prevent="submitHandler">
-      <v-row class="mt-15 mr-15">
-        <v-col cols="12" md="3" lg="3">
-          <date-picker-separated
-            v-model="date"
-            type="gregory"
-            display-type="jalali"
-            :min="min"
-            :max="max"
-            jalali-format="jYYYY-jMM-jDD"
-            gregory-format="YYYY-MM-DD"
-            :rules="rules"
-          ></date-picker-separated>
-        </v-col>
-      </v-row>
+    <v-form
+      ref="myForm"
+      v-model="validity"
+      class="d-block"
+      @submit.prevent="submitHandler"
+    >
+      <v-container :style="{ width: containerWidth }" class="mx-auto">
+        <v-row>
+          <v-col cols="12" sm="6" md="3">
+            <date-picker-separated
+              v-model="date"
+              type="gregory"
+              display-type="jalali"
+              :min="min"
+              :max="max"
+              jalali-format="jYYYY-jMM-jDD"
+              gregory-format="YYYY-MM-DD"
+              :rules="rules"
+            ></date-picker-separated>
+          </v-col>
+          <v-col cols="12" sm="6" md="3">
+            <date-picker-separated
+              v-model="date"
+              type="gregory"
+              display-type="gregory"
+              :min="min"
+              :max="max"
+              jalali-format="jYYYY-jMM-jDD"
+              gregory-format="YYYY-MM-DD"
+              :rules="rules"
+            ></date-picker-separated>
+          </v-col>
+        </v-row>
+      </v-container>
+
       <v-btn type="submit"> submit</v-btn>
     </v-form>
   </div>
@@ -37,6 +57,13 @@ export default {
   computed: {
     rules() {
       return [isRequired]
+    },
+    containerWidth() {
+      if (this.$vuetify.breakpoint.mdAndDown) {
+        return '96%'
+      } else {
+        return '1200px'
+      }
     },
   },
   methods: {
