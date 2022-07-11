@@ -109,9 +109,6 @@
       >
       </v-autocomplete>
     </div>
-    <p v-if="errorMsg" class="mt-2 error--text text-caption">
-      {{ errorMsg }}
-    </p>
     <div
       v-if="showAlert"
       class="d-flex align-center flex-wrap mt-2 error--text text-caption"
@@ -126,6 +123,9 @@
       </p>
       <p>باشد.</p>
     </div>
+    <p v-else-if="errorMsg" class="mt-2 error--text text-caption">
+      {{ errorMsg }}
+    </p>
   </div>
 </template>
 <script>
@@ -557,41 +557,43 @@ export default {
       await this.$nextTick()
       this.$emit('input', null)
     },
-    yearFocus() {
-      console.log('focus')
+    async yearFocus() {
+      await this.$nextTick()
       this.$refs.year.focus()
       this.$refs.year.isMenuActive = true // this is for activating menu
       this.showYearMenu = true // this is for showing menu
     },
-    yearBlur() {
-      console.log('blur')
+    async yearBlur() {
+      await this.$nextTick()
       this.$refs.year.blur()
       this.$refs.year.isMenuActive = false
       this.showYearMenu = false
     },
-
-    monthFocus() {
+    async monthFocus() {
+      await this.$nextTick()
       this.$refs.month.focus()
       this.$refs.month.isMenuActive = true
       this.showMonthMenu = true
     },
-    monthBlur() {
+    async monthBlur() {
+      await this.$nextTick()
       this.$refs.month.blur()
       this.$refs.month.isMenuActive = false
       this.showMonthMenu = false
     },
-    dayFocus() {
+    async dayFocus() {
+      await this.$nextTick()
       this.$refs.day.focus()
       this.$refs.day.isMenuActive = true
       this.showDayMenu = true
     },
-    dayBlur() {
+    async dayBlur() {
+      await this.$nextTick()
       this.$refs.day.blur()
       this.$refs.day.isMenuActive = false
       this.showDayMenu = false
     },
     yearChange() {
-      console.log('change')
       if (this.year) {
         this.yearBlur()
       } else {
