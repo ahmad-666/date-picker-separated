@@ -36,6 +36,8 @@
         :menu-props="{
           contentClass: 'direction-ltr date-separated-menu',
           value: showDayMenu,
+          closeOnClick: false,
+          closeOnContentClick: true,
         }"
         :reverse="displayType !== 'jalali'"
         :rules="rules"
@@ -67,6 +69,8 @@
               ? 'direction-rtl date-separated-menu'
               : 'direction-ltr date-separated-menu',
           value: showMonthMenu,
+          closeOnClick: false,
+          closeOnContentClick: true,
         }"
         :reverse="displayType !== 'jalali'"
         @update:search-input="monthSearchHandler"
@@ -95,6 +99,8 @@
         :menu-props="{
           contentClass: 'direction-ltr date-separated-menu',
           value: showYearMenu,
+          closeOnClick: false,
+          closeOnContentClick: true,
         }"
         @update:search-input="yearSearchHandler"
         @change="yearChange"
@@ -106,20 +112,20 @@
     <p v-if="errorMsg" class="mt-2 error--text text-caption">
       {{ errorMsg }}
     </p>
-    <v-alert
-      v-model="showAlert"
-      class="mt-5"
-      width="550"
-      max-width="100%"
-      dismissible
-      type="error"
-      dense
-      dark
+    <div
+      v-if="showAlert"
+      class="d-flex align-center flex-wrap mt-2 error--text text-caption"
     >
-      <p class="text-body-2">
-        {{ alertText }}
+      <p>تاریخ انتخابی باید بین</p>
+      <p>
+        {{ minDate }}
       </p>
-    </v-alert>
+      <p>و</p>
+      <p>
+        {{ maxDate }}
+      </p>
+      <p>باشد.</p>
+    </div>
   </div>
 </template>
 <script>
@@ -189,12 +195,15 @@ export default {
       type: Array,
       default: () => [],
     },
+    order: {
+      type: String, // 'asc' | 'dsc'
+      default: 'dsc',
+    },
   },
   emits: ['input'],
   data() {
     return {
       showAlert: null,
-      alertText: null,
       year: null,
       month: null,
       day: null,
@@ -296,7 +305,7 @@ export default {
       const years = []
       for (let i = this.maxYear; i >= this.minYear; i--)
         years.push({ value: i.toString(), text: i.toString() })
-      return years
+      return this.order === 'dsc' ? years : years.reverse()
     },
     months() {
       let allMonths = []
@@ -505,16 +514,10 @@ export default {
             const isAfter = m.isAfter(afterM)
             if (isBefore || isAfter) {
               this.showAlert = true
-              this.alertText = `تاریخ انتخابی باید بین ${this.$moment(
-                beforeM
-              ).format(this.format)} و ${this.$moment(afterM).format(
-                this.format
-              )} باشند`
               await this.$nextTick()
               this.day = null
             } else {
               this.showAlert = false
-              this.alertText = null
               this.$emit('input', m.format(this.modelFormat))
             }
           }
@@ -555,11 +558,13 @@ export default {
       this.$emit('input', null)
     },
     yearFocus() {
+      console.log('focus')
       this.$refs.year.focus()
-      this.$refs.year.isMenuActive = true
-      this.showYearMenu = true
+      this.$refs.year.isMenuActive = true // this is for activating menu
+      this.showYearMenu = true // this is for showing menu
     },
     yearBlur() {
+      console.log('blur')
       this.$refs.year.blur()
       this.$refs.year.isMenuActive = false
       this.showYearMenu = false
@@ -586,6 +591,7 @@ export default {
       this.showDayMenu = false
     },
     yearChange() {
+      console.log('change')
       if (this.year) {
         this.yearBlur()
       } else {

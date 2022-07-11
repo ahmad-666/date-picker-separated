@@ -10,26 +10,26 @@
         <v-row>
           <v-col cols="12" sm="6" md="3">
             <date-picker-separated
-              v-model="date"
+              v-model="date1"
               type="gregory"
               display-type="jalali"
               :min="min"
-              :max="max"
               jalali-format="jYYYY-jMM-jDD"
               gregory-format="YYYY-MM-DD"
               :rules="rules"
+              order="asc"
             ></date-picker-separated>
           </v-col>
           <v-col cols="12" sm="6" md="3">
             <date-picker-separated
-              v-model="date"
+              v-model="date2"
               type="gregory"
               display-type="gregory"
-              :min="min"
               :max="max"
               jalali-format="jYYYY-jMM-jDD"
               gregory-format="YYYY-MM-DD"
               :rules="rules"
+              order="asc"
             ></date-picker-separated>
           </v-col>
         </v-row>
@@ -49,7 +49,8 @@ export default {
       // date: '1400-10-10',
       // min: '1395-10-10',
       // max: '1401-04-18',
-      date: null,
+      date1: '2020-10-10',
+      date2: null,
       min: '2019-10-10',
       max: '2023-10-10',
     }
