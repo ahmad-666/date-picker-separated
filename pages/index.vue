@@ -7,13 +7,14 @@
       @submit.prevent="submitHandler"
     >
       <v-container>
-        <v-row>
+        <v-row no-gutters>
           <v-col cols="12" sm="6" md="3">
             <date-picker-separated
               v-model="date1"
               type="gregory"
               display-type="jalali"
               :min="min"
+              :max="max"
               jalali-format="jYYYY-jMM-jDD"
               gregory-format="YYYY-MM-DD"
               :rules="rules"
@@ -37,8 +38,7 @@ export default {
       // date: '1400-10-10',
       // min: '1395-10-10',
       // max: '1401-04-18',
-      date1: '2020/10/10',
-
+      date1: '2025-03-05',
       min: '2019-10-10',
       max: '2023-10-10',
     }

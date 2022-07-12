@@ -20,8 +20,8 @@
       <v-autocomplete
         ref="day"
         v-model="day"
-        :search-input.sync="daySearch"
         hide-details
+        :search-input.sync="daySearch"
         :items="days"
         :label="displayType === 'jalali' ? 'روز' : 'day'"
         outlined
@@ -49,11 +49,11 @@
       <v-autocomplete
         ref="month"
         v-model="month"
+        hide-details
         :style="{
           flex: '7 1 0 !important',
         }"
         :search-input.sync="monthSearch"
-        hide-details
         :items="months"
         :label="displayType === 'jalali' ? 'ماه' : 'month'"
         background-color="transparent"
@@ -81,11 +81,11 @@
       <v-autocomplete
         ref="year"
         v-model="year"
+        hide-details
         :style="{
           flex: '5 1 0 !important',
         }"
         :search-input.sync="yearSearch"
-        hide-details
         :rules="rules"
         :items="years"
         :label="displayType === 'jalali' ? 'سال' : 'year'"
@@ -110,22 +110,23 @@
       </v-autocomplete>
     </div>
     <div
-      v-if="showAlert"
-      class="d-flex align-center flex-wrap mt-2 error--text text-caption"
+      class="d-flex align-center flex-wrap mt-2 mb-4 error--text text-caption"
     >
-      <p>تاریخ انتخابی باید بین</p>
-      <p>
-        {{ minDate }}
-      </p>
-      <p>و</p>
-      <p>
-        {{ maxDate }}
-      </p>
-      <p>باشد.</p>
+      <template v-if="showAlert">
+        <p class="mb-0">تاریخ انتخابی باید بین</p>
+        <p class="mb-0">
+          {{ minDate }}
+        </p>
+        <p class="mb-0">و</p>
+        <p class="mb-0">
+          {{ maxDate }}
+        </p>
+        <p class="mb-0">باشد.</p>
+      </template>
+      <template v-else-if="errorMsg">
+        {{ errorMsg }}
+      </template>
     </div>
-    <p v-else-if="errorMsg" class="mt-2 error--text text-caption">
-      {{ errorMsg }}
-    </p>
   </div>
 </template>
 <script>
@@ -515,7 +516,9 @@ export default {
             if (isBefore || isAfter) {
               this.showAlert = true
               await this.$nextTick()
-              this.day = null
+              if (this.years.find((y) => y.value === this.year)) {
+                this.day = null
+              } else this.year = null
             } else {
               this.showAlert = false
               this.$emit('input', m.format(this.modelFormat))
