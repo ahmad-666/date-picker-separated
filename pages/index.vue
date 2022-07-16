@@ -12,7 +12,7 @@
             <date-picker-separated
               v-model="date1"
               type="gregory"
-              display-type="jalali"
+              display-type="gregory"
               :min="min"
               :max="max"
               jalali-format="jYYYY-jMM-jDD"
@@ -38,7 +38,7 @@ export default {
       // date: '1400-10-10',
       // min: '1395-10-10',
       // max: '1401-04-18',
-      date1: '2025-03-05',
+      date1: '2020-03-05',
       min: '2019-10-10',
       max: '2023-10-10',
     }

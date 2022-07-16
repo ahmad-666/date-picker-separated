@@ -41,10 +41,11 @@
         }"
         :reverse="displayType !== 'jalali'"
         :rules="rules"
-        @update:search-input="daySearchHandler"
+        @update:search-input="searchHandler('day')"
         @change="dayChange"
-        @blur="dayBlur"
-        @focus="dayFocus"
+        @blur="blurHandler('day')"
+        @focus="focusHandler('day')"
+        @click:append="clickAppend('day')"
       ></v-autocomplete>
       <v-autocomplete
         ref="month"
@@ -73,10 +74,11 @@
           closeOnContentClick: true,
         }"
         :reverse="displayType !== 'jalali'"
-        @update:search-input="monthSearchHandler"
+        @click:append="clickAppend('month')"
+        @update:search-input="searchHandler('month')"
         @change="monthChange"
-        @blur="monthBlur"
-        @focus="monthFocus"
+        @blur="blurHandler('month')"
+        @focus="focusHandler('month')"
       ></v-autocomplete>
       <v-autocomplete
         ref="year"
@@ -102,10 +104,11 @@
           closeOnClick: false,
           closeOnContentClick: true,
         }"
-        @update:search-input="yearSearchHandler"
+        @click:append="clickAppend('year')"
+        @update:search-input="searchHandler('year')"
         @change="yearChange"
-        @blur="yearBlur"
-        @focus="yearFocus"
+        @blur="blurHandler('year')"
+        @focus="focusHandler('year')"
       >
       </v-autocomplete>
     </div>
@@ -246,8 +249,9 @@ export default {
       return this.$vuetify.theme.themes[this.theme].textColor
     },
     noDataText() {
-      if (this.displayType === 'jalali') return 'نتیجه ای پیدا نشد'
-      else return 'no data available'
+      return 'نتیجه ای پیدا نشد'
+      // if (this.displayType === 'jalali') return 'نتیجه ای پیدا نشد'
+      // else return 'no data available'
     },
     minDate() {
       if (this.min) {
@@ -532,27 +536,6 @@ export default {
     this.mounted = true
   },
   methods: {
-    daySearchHandler() {
-      if (this.daySearch) {
-        this.daySearch = `${this.daySearch}`.replace(/[۰-۹]/g, (d) =>
-          '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)
-        )
-      } else this.daySearch = null
-    },
-    monthSearchHandler() {
-      if (this.monthSearch) {
-        this.monthSearch = `${this.monthSearch}`.replace(/[۰-۹]/g, (d) =>
-          '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)
-        )
-      } else this.monthSearch = null
-    },
-    yearSearchHandler() {
-      if (this.yearSearch) {
-        this.yearSearch = `${this.yearSearch}`.replace(/[۰-۹]/g, (d) =>
-          '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)
-        )
-      } else this.yearSearch = null
-    },
     async clearHandler() {
       this.year = null
       this.month = null
@@ -560,76 +543,90 @@ export default {
       await this.$nextTick()
       this.$emit('input', null)
     },
-    async yearFocus() {
-      await this.$nextTick()
-      this.$refs.year.focus()
-      this.$refs.year.isMenuActive = true // this is for activating menu
-      this.showYearMenu = true // this is for showing menu
+    clickAppend(type) {
+      this.focusHandler(type)
     },
-    async yearBlur() {
-      await this.$nextTick()
-      this.$refs.year.blur()
-      this.$refs.year.isMenuActive = false
-      this.showYearMenu = false
+    searchHandler(type) {
+      let value = null
+      if (type === 'year') value = 'yearSearch'
+      else if (type === 'month') value = 'monthSearch'
+      else if (type === 'day') value = 'daySearch'
+      if (this[value]) {
+        this[value] = `${this[value]}`.replace(/[۰-۹]/g, (d) =>
+          '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)
+        )
+      } else this[value] = null
     },
-    async monthFocus() {
+    async focusHandler(type) {
+      let ref = null
+      let menu = null
+      if (type === 'year') {
+        ref = 'year'
+        menu = 'showYearMenu'
+      } else if (type === 'month') {
+        ref = 'month'
+        menu = 'showMonthMenu'
+      } else if (type === 'day') {
+        ref = 'day'
+        menu = 'showDayMenu'
+      }
       await this.$nextTick()
-      this.$refs.month.focus()
-      this.$refs.month.isMenuActive = true
-      this.showMonthMenu = true
+      this.$refs[ref].focus()
+      this.$refs[ref].isMenuActive = true // this is for activating menu
+      this[menu] = true // this is for showing menu
     },
-    async monthBlur() {
+    async blurHandler(type) {
+      let ref = null
+      let menu = null
+      if (type === 'year') {
+        ref = 'year'
+        menu = 'showYearMenu'
+      } else if (type === 'month') {
+        ref = 'month'
+        menu = 'showMonthMenu'
+      } else if (type === 'day') {
+        ref = 'day'
+        menu = 'showDayMenu'
+      }
       await this.$nextTick()
-      this.$refs.month.blur()
-      this.$refs.month.isMenuActive = false
-      this.showMonthMenu = false
-    },
-    async dayFocus() {
-      await this.$nextTick()
-      this.$refs.day.focus()
-      this.$refs.day.isMenuActive = true
-      this.showDayMenu = true
-    },
-    async dayBlur() {
-      await this.$nextTick()
-      this.$refs.day.blur()
-      this.$refs.day.isMenuActive = false
-      this.showDayMenu = false
+      this.$refs[ref].blur()
+      this.$refs[ref].isMenuActive = false
+      this[menu] = false
     },
     yearChange() {
       if (this.year) {
-        this.yearBlur()
+        this.blurHandler('year')
       } else {
-        this.yearFocus()
+        this.focusHandler('year')
       }
       if (!this.month) {
-        this.monthFocus()
+        this.focusHandler('month')
       } else if (!this.day) {
-        this.dayFocus()
+        this.focusHandler('day')
       }
     },
     monthChange() {
       if (this.month) {
-        this.monthBlur()
+        this.blurHandler('month')
       } else {
-        this.monthFocus()
+        this.focusHandler('month')
       }
       if (!this.day) {
-        this.dayFocus()
+        this.focusHandler('day')
       } else if (!this.year) {
-        this.yearFocus()
+        this.focusHandler('year')
       }
     },
     dayChange() {
       if (this.day) {
-        this.dayBlur()
+        this.blurHandler('day')
       } else {
-        this.dayFocus()
+        this.focusHandler('day')
       }
       if (!this.year) {
-        this.yearFocus()
+        this.focusHandler('year')
       } else if (!this.month) {
-        this.monthFocus()
+        this.focusHandler('month')
       }
     },
   },
