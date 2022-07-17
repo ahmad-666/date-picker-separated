@@ -25,12 +25,7 @@
         :items="days"
         :label="displayType === 'jalali' ? 'روز' : 'day'"
         outlined
-        class="
-          form-elm-direction-ltr
-          date-picker-form-elm
-          day
-          rounded-r-lg rounded-l-0
-        "
+        class="form-elm-direction-ltr date-picker-form-elm day rounded-r-lg rounded-l-0"
         :height="height"
         :style="{
           flex: '4 1 0 !important',
@@ -79,6 +74,7 @@
           closeOnContentClick: true,
         }"
         :reverse="displayType !== 'jalali'"
+        :filter="monthFilter"
         @click:append="clickAppend('month')"
         @update:search-input="searchHandler('month')"
         @change="monthChange"
@@ -102,12 +98,7 @@
         :dense="dense"
         :reverse="displayType !== 'jalali'"
         :no-data-text="noDataText"
-        class="
-          form-elm-direction-ltr
-          date-picker-form-elm
-          year
-          rounded-l-lg rounded-r-0
-        "
+        class="form-elm-direction-ltr date-picker-form-elm year rounded-l-lg rounded-r-0"
         :menu-props="{
           contentClass: 'direction-ltr date-separated-menu',
           value: showYearMenu,
@@ -148,9 +139,9 @@ export default {
     title: {
       type: String,
       default: null,
-      validator: val => {
-        if (val === null || typeof val === 'string') return true;
-        return false;
+      validator: (val) => {
+        if (val === null || typeof val === 'string') return true
+        return false
       },
     },
     clearable: {
@@ -160,9 +151,9 @@ export default {
     value: {
       type: String,
       default: null,
-      validator: val => {
-        if (val === null || typeof val === 'string') return true;
-        return false;
+      validator: (val) => {
+        if (val === null || typeof val === 'string') return true
+        return false
       },
     },
     type: {
@@ -176,17 +167,17 @@ export default {
     min: {
       type: String,
       default: null,
-      validator: val => {
-        if (val === null || typeof val === 'string') return true;
-        return false;
+      validator: (val) => {
+        if (val === null || typeof val === 'string') return true
+        return false
       },
     },
     max: {
       type: String,
       default: null,
-      validator: val => {
-        if (val === null || typeof val === 'string') return true;
-        return false;
+      validator: (val) => {
+        if (val === null || typeof val === 'string') return true
+        return false
       },
     },
     dense: {
@@ -228,101 +219,102 @@ export default {
       daySearch: null,
       monthSearch: null,
       yearSearch: null,
-    };
+    }
   },
   computed: {
     yearHasError() {
       if (this.mounted)
-        return this.$refs.year.shouldValidate && this.$refs.year.hasError;
-      return null;
+        return this.$refs.year.shouldValidate && this.$refs.year.hasError
+      return null
     },
     monthHasError() {
       if (this.mounted)
-        return this.$refs.month.shouldValidate && this.$refs.month.hasError;
-      return null;
+        return this.$refs.month.shouldValidate && this.$refs.month.hasError
+      return null
     },
     dayHasError() {
       if (this.mounted)
-        return this.$refs.day.shouldValidate && this.$refs.day.hasError;
-      return null;
+        return this.$refs.day.shouldValidate && this.$refs.day.hasError
+      return null
     },
     errorMsg() {
-      if (this.yearHasError) return 'سال را وارد کنید';
-      if (this.monthHasError) return 'ماه را وارد کنید';
-      else if (this.dayHasError) return 'روز را وارد کنید';
-      else return null;
+      if (this.yearHasError) return 'سال را وارد کنید'
+      if (this.monthHasError) return 'ماه را وارد کنید'
+      else if (this.dayHasError) return 'روز را وارد کنید'
+      else return null
     },
     theme() {
-      return this.$vuetify.theme.dark === true ? 'dark' : 'light';
+      return this.$vuetify.theme.dark === true ? 'dark' : 'light'
     },
     textColor() {
-      return this.$vuetify.theme.themes[this.theme].textColor;
+      return this.$vuetify.theme.themes[this.theme].textColor
     },
     noDataText() {
-      return 'نتیجه ای پیدا نشد';
+      return 'نتیجه ای پیدا نشد'
       // if (this.displayType === 'jalali') return 'نتیجه ای پیدا نشد'
       // else return 'no data available'
     },
     minDate() {
       if (this.min) {
-        return this.$moment(this.min, this.modelFormat).format(this.format);
-      } else return this.$moment().clone().subtract(100, 'year').format(this.format);
+        return this.$moment(this.min, this.modelFormat).format(this.format)
+      } else
+        return this.$moment().clone().subtract(100, 'year').format(this.format)
     },
     maxDate() {
       if (this.max)
-        return this.$moment(this.max, this.modelFormat).format(this.format);
-      else return this.$moment().clone().add(100, 'year').format(this.format);
+        return this.$moment(this.max, this.modelFormat).format(this.format)
+      else return this.$moment().clone().add(100, 'year').format(this.format)
     },
     format() {
-      if (this.displayType === 'jalali') return this.jalaliFormat;
-      else return this.gregoryFormat;
+      if (this.displayType === 'jalali') return this.jalaliFormat
+      else return this.gregoryFormat
     },
     modelFormat() {
-      if (this.type === 'jalali') return this.jalaliFormat;
-      else return this.gregoryFormat;
+      if (this.type === 'jalali') return this.jalaliFormat
+      else return this.gregoryFormat
     },
     yearFormat() {
-      if (this.displayType === 'jalali') return 'jYYYY';
-      else return 'YYYY';
+      if (this.displayType === 'jalali') return 'jYYYY'
+      else return 'YYYY'
     },
     monthFormat() {
-      if (this.displayType === 'jalali') return 'jMM';
-      else return 'MM';
+      if (this.displayType === 'jalali') return 'jMM'
+      else return 'MM'
     },
     monthNameFormat() {
-      if (this.displayType === 'jalali') return 'jMMMM';
-      else return 'MMMM';
+      if (this.displayType === 'jalali') return 'jMMMM'
+      else return 'MMMM'
     },
     dayFormat() {
-      if (this.displayType === 'jalali') return 'jDD';
-      else return 'DD';
+      if (this.displayType === 'jalali') return 'jDD'
+      else return 'DD'
     },
     minYear() {
-      return +this.$moment(this.minDate, this.format).format(this.yearFormat);
+      return +this.$moment(this.minDate, this.format).format(this.yearFormat)
     },
     maxYear() {
-      return +this.$moment(this.maxDate, this.format).format(this.yearFormat);
+      return +this.$moment(this.maxDate, this.format).format(this.yearFormat)
     },
     minMonth() {
-      return +this.$moment(this.minDate, this.format).format(this.monthFormat);
+      return +this.$moment(this.minDate, this.format).format(this.monthFormat)
     },
     maxMonth() {
-      return +this.$moment(this.maxDate, this.format).format(this.monthFormat);
+      return +this.$moment(this.maxDate, this.format).format(this.monthFormat)
     },
     minDay() {
-      return +this.$moment(this.minDate, this.format).format(this.dayFormat);
+      return +this.$moment(this.minDate, this.format).format(this.dayFormat)
     },
     maxDay() {
-      return +this.$moment(this.maxDate, this.format).format(this.dayFormat);
+      return +this.$moment(this.maxDate, this.format).format(this.dayFormat)
     },
     years() {
-      const years = [];
+      const years = []
       for (let i = this.maxYear; i >= this.minYear; i--)
-        years.push({ value: i.toString(), text: i.toString() });
-      return this.order === 'dsc' ? years : years.reverse();
+        years.push({ value: i.toString(), text: i.toString() })
+      return this.order === 'dsc' ? years : years.reverse()
     },
     months() {
-      let allMonths = [];
+      let allMonths = []
       if (this.displayType === 'jalali') {
         allMonths = [
           {
@@ -373,7 +365,7 @@ export default {
             value: '12',
             text: 'اسفند',
           },
-        ];
+        ]
       } else {
         allMonths = [
           {
@@ -424,34 +416,34 @@ export default {
             value: '12',
             text: 'December',
           },
-        ];
+        ]
       }
       if (+this.year === this.minYear)
-        return allMonths.map(m => {
+        return allMonths.map((m) => {
           return {
             ...m,
             disabled: +m.value < this.minMonth,
-          };
-        });
+          }
+        })
       else if (+this.year === this.maxYear)
-        return allMonths.map(m => {
+        return allMonths.map((m) => {
           return {
             ...m,
             disabled: +m.value > this.maxMonth,
-          };
-        });
-      else return allMonths;
+          }
+        })
+      else return allMonths
     },
     days() {
-      const days = [];
+      const days = []
       if (!this.year || !this.month) {
         for (let i = 1; i <= 31; i++) {
           days.push({
             value: i < 10 ? `0${i}` : i,
             text: i,
-          });
+          })
         }
-        return days;
+        return days
       } else {
         const daysInMonth =
           this.displayType === 'jalali'
@@ -459,27 +451,27 @@ export default {
             : this.$moment(
                 `${this.year}/${this.month}`,
                 `${this.yearFormat}/${this.monthFormat}`
-              ).daysInMonth();
+              ).daysInMonth()
 
         for (let i = 1; i <= daysInMonth; i++) {
-          const value = i < 10 ? `0${i}` : i.toString();
+          const value = i < 10 ? `0${i}` : i.toString()
           const isLessThanMin =
             (+this.year <= this.minYear && +this.month < this.minMonth) ||
             (+this.year <= this.minYear &&
               +this.month === this.minMonth &&
-              +value < this.minDay);
+              +value < this.minDay)
           const isMoreThanMax =
             (+this.year >= this.maxYear && +this.month > this.maxMonth) ||
             (+this.year >= this.maxYear &&
               +this.month === this.maxMonth &&
-              +value > this.maxDay);
+              +value > this.maxDay)
           days.push({
             value,
             text: i.toString(),
             disabled: isLessThanMin || isMoreThanMax,
-          });
+          })
         }
-        return days;
+        return days
       }
     },
     localValue() {
@@ -487,7 +479,7 @@ export default {
         year: this.year?.toString(),
         month: this.month?.toString(),
         day: this.day?.toString(),
-      };
+      }
     },
   },
   watch: {
@@ -495,14 +487,14 @@ export default {
       immediate: true,
       handler(val) {
         if (!val) {
-          this.year = null;
-          this.month = null;
-          this.day = null;
+          this.year = null
+          this.month = null
+          this.day = null
         } else {
-          const m = this.$moment(val, this.modelFormat);
-          this.year = m.format(this.yearFormat).toString();
-          this.month = m.format(this.monthFormat).toString();
-          this.day = m.format(this.dayFormat).toString();
+          const m = this.$moment(val, this.modelFormat)
+          this.year = m.format(this.yearFormat).toString()
+          this.month = m.format(this.monthFormat).toString()
+          this.day = m.format(this.dayFormat).toString()
         }
       },
     },
@@ -510,31 +502,31 @@ export default {
       immediate: true,
       deep: true,
       async handler(newVal) {
-        const newYear = newVal?.year;
-        const newMonth = newVal?.month;
-        const newDay = newVal?.day;
+        const newYear = newVal?.year
+        const newMonth = newVal?.month
+        const newDay = newVal?.day
         if (newYear && newMonth && newDay) {
-          const newDate = `${newYear}/${newMonth}/${newDay}`;
+          const newDate = `${newYear}/${newMonth}/${newDay}`
           const m = this.$moment(
             newDate,
             `${this.yearFormat}/${this.monthFormat}/${this.dayFormat}`
-          );
+          )
           if (!m.isValid()) {
-            this.day = null;
+            this.day = null
           } else {
-            const beforeM = this.$moment(this.minDate, this.format);
-            const afterM = this.$moment(this.maxDate, this.format);
-            const isBefore = m.isBefore(beforeM);
-            const isAfter = m.isAfter(afterM);
+            const beforeM = this.$moment(this.minDate, this.format)
+            const afterM = this.$moment(this.maxDate, this.format)
+            const isBefore = m.isBefore(beforeM)
+            const isAfter = m.isAfter(afterM)
             if (isBefore || isAfter) {
-              this.showAlert = true;
-              await this.$nextTick();
-              if (this.years.find(y => y.value === this.year)) {
-                this.day = null;
-              } else this.year = null;
+              this.showAlert = true
+              await this.$nextTick()
+              if (this.years.find((y) => y.value === this.year)) {
+                this.day = null
+              } else this.year = null
             } else {
-              this.showAlert = false;
-              this.$emit('input', m.format(this.modelFormat));
+              this.showAlert = false
+              this.$emit('input', m.format(this.modelFormat))
             }
           }
         }
@@ -542,104 +534,110 @@ export default {
     },
   },
   mounted() {
-    this.mounted = true;
+    this.mounted = true
   },
   methods: {
+    monthFilter(item, queryText, itemText) {
+      return (
+        itemText.toLowerCase().includes(queryText.toLowerCase()) ||
+        +item.value.includes(+queryText.toLowerCase())
+      )
+    },
     async clearHandler() {
-      this.year = null;
-      this.month = null;
-      this.day = null;
-      await this.$nextTick();
-      this.$emit('input', null);
+      this.year = null
+      this.month = null
+      this.day = null
+      await this.$nextTick()
+      this.$emit('input', null)
     },
     clickAppend(type) {
-      this.focusHandler(type);
+      this.focusHandler(type)
     },
     searchHandler(type) {
-      let value = null;
-      if (type === 'year') value = 'yearSearch';
-      else if (type === 'month') value = 'monthSearch';
-      else if (type === 'day') value = 'daySearch';
+      let value = null
+      if (type === 'year') value = 'yearSearch'
+      else if (type === 'month') value = 'monthSearch'
+      else if (type === 'day') value = 'daySearch'
       if (this[value]) {
-        this[value] = `${this[value]}`.replace(/[۰-۹]/g, d =>
+        this[value] = `${this[value]}`.replace(/[۰-۹]/g, (d) =>
           '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)
-        );
-      } else this[value] = null;
+        )
+      } else this[value] = null
     },
     async focusHandler(type) {
-      let ref = null;
-      let menu = null;
+      let ref = null
+      let menu = null
       if (type === 'year') {
-        ref = 'year';
-        menu = 'showYearMenu';
+        ref = 'year'
+        menu = 'showYearMenu'
       } else if (type === 'month') {
-        ref = 'month';
-        menu = 'showMonthMenu';
+        ref = 'month'
+        menu = 'showMonthMenu'
       } else if (type === 'day') {
-        ref = 'day';
-        menu = 'showDayMenu';
+        ref = 'day'
+        menu = 'showDayMenu'
       }
-      await this.$nextTick();
-      this.$refs[ref].focus();
-      this.$refs[ref].isMenuActive = true; // this is for activating menu
-      this[menu] = true; // this is for showing menu
+      await this.$nextTick()
+      this.$refs[ref].focus()
+      this.$refs[ref].isMenuActive = true // this is for activating menu
+      this[menu] = true // this is for showing menu
     },
     async blurHandler(type) {
-      let ref = null;
-      let menu = null;
+      let ref = null
+      let menu = null
       if (type === 'year') {
-        ref = 'year';
-        menu = 'showYearMenu';
+        ref = 'year'
+        menu = 'showYearMenu'
       } else if (type === 'month') {
-        ref = 'month';
-        menu = 'showMonthMenu';
+        ref = 'month'
+        menu = 'showMonthMenu'
       } else if (type === 'day') {
-        ref = 'day';
-        menu = 'showDayMenu';
+        ref = 'day'
+        menu = 'showDayMenu'
       }
-      await this.$nextTick();
-      this.$refs[ref].blur();
-      this.$refs[ref].isMenuActive = false;
-      this[menu] = false;
+      await this.$nextTick()
+      this.$refs[ref].blur()
+      this.$refs[ref].isMenuActive = false
+      this[menu] = false
     },
     yearChange() {
       if (this.year) {
-        this.blurHandler('year');
+        this.blurHandler('year')
       } else {
-        this.focusHandler('year');
+        this.focusHandler('year')
       }
       if (!this.month) {
-        this.focusHandler('month');
+        this.focusHandler('month')
       } else if (!this.day) {
-        this.focusHandler('day');
+        this.focusHandler('day')
       }
     },
     monthChange() {
       if (this.month) {
-        this.blurHandler('month');
+        this.blurHandler('month')
       } else {
-        this.focusHandler('month');
+        this.focusHandler('month')
       }
       if (!this.day) {
-        this.focusHandler('day');
+        this.focusHandler('day')
       } else if (!this.year) {
-        this.focusHandler('year');
+        this.focusHandler('year')
       }
     },
     dayChange() {
       if (this.day) {
-        this.blurHandler('day');
+        this.blurHandler('day')
       } else {
-        this.focusHandler('day');
+        this.focusHandler('day')
       }
       if (!this.year) {
-        this.focusHandler('year');
+        this.focusHandler('year')
       } else if (!this.month) {
-        this.focusHandler('month');
+        this.focusHandler('month')
       }
     },
   },
-};
+}
 </script>
 <style lang="scss">
 .direction-ltr,
@@ -694,6 +692,9 @@ export default {
 .date-separated-menu {
   .v-list-item {
     padding: 0px 2px !important;
+  }
+  .v-list-item__content {
+    padding: 12px !important;
   }
 }
 </style>
