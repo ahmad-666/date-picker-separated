@@ -20,6 +20,7 @@
       <v-autocomplete
         ref="day"
         v-model="day"
+        auto-select-first
         hide-details
         :search-input.sync="daySearch"
         :items="days"
@@ -50,6 +51,7 @@
       <v-autocomplete
         ref="month"
         v-model="month"
+        auto-select-first
         hide-details
         :style="{
           flex: '7 1 0 !important',
@@ -84,6 +86,7 @@
       <v-autocomplete
         ref="year"
         v-model="year"
+        auto-select-first
         hide-details
         :style="{
           flex: '5 1 0 !important',
