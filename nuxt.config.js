@@ -21,7 +21,9 @@ export default {
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [],
+  plugins: [
+    '~/plugins/dayjsJalali.js'
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -39,8 +41,16 @@ export default {
     locales: ['fa'],
   },
 
+  dayjs: {
+    locales: ['en', 'fa'],
+    defaultLocale: 'en',
+    plugins: [
+      'customParseFormat',
+    ],
+  },
+
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: [],
+  modules: ['@nuxtjs/dayjs'],
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {

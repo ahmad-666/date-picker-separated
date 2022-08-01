@@ -191,11 +191,7 @@ export default {
       type: String,
       default: '55px',
     },
-    jalaliFormat: {
-      type: String,
-      default: 'jYYYY-jMM-jDD',
-    },
-    gregoryFormat: {
+    format: {
       type: String,
       default: 'YYYY-MM-DD',
     },
@@ -225,6 +221,33 @@ export default {
     }
   },
   computed: {
+    isJalali() {
+      return this.type === 'jalali'
+    },
+    isJalaliLocal() {
+      return this.displayType === 'jalali'
+    },
+    calendar() {
+      return this.type
+    },
+    calendarLocal() {
+      return this.displayType
+    },
+    locale() {
+      return this.type === 'jalali' ? 'fa' : 'en'
+    },
+    localeLocal() {
+      return this.displayType === 'jalali' ? 'fa' : 'en'
+    },
+    yearFormat() {
+      return this.format.match(/Y/g).join('')
+    },
+    monthFormat() {
+      return this.format.match(/M/g).join('')
+    },
+    dayFormat() {
+      return this.format.match(/D/g).join('')
+    },
     yearHasError() {
       if (this.mounted)
         return this.$refs.year.shouldValidate && this.$refs.year.hasError
@@ -259,56 +282,65 @@ export default {
     },
     minDate() {
       if (this.min) {
-        return this.$moment(this.min, this.modelFormat).format(this.format)
+        return this.$dayjs(this.min, { jalali: this.isJalali })
+          .calendar(this.calendarLocal)
+          .locale(this.localeLocal)
+          .format(this.format)
       } else
-        return this.$moment().clone().subtract(100, 'year').format(this.format)
+        return this.$dayjs()
+          .subtract(100, 'year')
+          .calendar(this.calendarLocal)
+          .locale(this.localeLocal)
+          .format(this.format)
     },
     maxDate() {
       if (this.max)
-        return this.$moment(this.max, this.modelFormat).format(this.format)
-      else return this.$moment().clone().add(100, 'year').format(this.format)
-    },
-    format() {
-      if (this.displayType === 'jalali') return this.jalaliFormat
-      else return this.gregoryFormat
-    },
-    modelFormat() {
-      if (this.type === 'jalali') return this.jalaliFormat
-      else return this.gregoryFormat
-    },
-    yearFormat() {
-      if (this.displayType === 'jalali') return 'jYYYY'
-      else return 'YYYY'
-    },
-    monthFormat() {
-      if (this.displayType === 'jalali') return 'jMM'
-      else return 'MM'
-    },
-    monthNameFormat() {
-      if (this.displayType === 'jalali') return 'jMMMM'
-      else return 'MMMM'
-    },
-    dayFormat() {
-      if (this.displayType === 'jalali') return 'jDD'
-      else return 'DD'
+        return this.$dayjs(this.max, { jalali: this.isJalali })
+          .calendar(this.calendarLocal)
+          .locale(this.localeLocal)
+          .format(this.format)
+      else
+        return this.$dayjs()
+          .add(100, 'year')
+          .calendar(this.calendarLocal)
+          .locale(this.localeLocal)
+          .format(this.format)
     },
     minYear() {
-      return +this.$moment(this.minDate, this.format).format(this.yearFormat)
+      return +this.$dayjs(this.minDate, { jalali: this.isJalaliLocal })
+        .calendar(this.calendarLocal)
+        .locale(this.localeLocal)
+        .format(this.yearFormat)
     },
     maxYear() {
-      return +this.$moment(this.maxDate, this.format).format(this.yearFormat)
+      return +this.$dayjs(this.maxDate, { jalali: this.isJalaliLocal })
+        .calendar(this.calendarLocal)
+        .locale(this.localeLocal)
+        .format(this.yearFormat)
     },
     minMonth() {
-      return +this.$moment(this.minDate, this.format).format(this.monthFormat)
+      return +this.$dayjs(this.minDate, { jalali: this.isJalaliLocal })
+        .calendar(this.calendarLocal)
+        .locale(this.localeLocal)
+        .format(this.monthFormat)
     },
     maxMonth() {
-      return +this.$moment(this.maxDate, this.format).format(this.monthFormat)
+      return +this.$dayjs(this.maxDate, { jalali: this.isJalaliLocal })
+        .calendar(this.calendarLocal)
+        .locale(this.localeLocal)
+        .format(this.monthFormat)
     },
     minDay() {
-      return +this.$moment(this.minDate, this.format).format(this.dayFormat)
+      return +this.$dayjs(this.minDate, { jalali: this.isJalaliLocal })
+        .calendar(this.calendarLocal)
+        .locale(this.localeLocal)
+        .format(this.dayFormat)
     },
     maxDay() {
-      return +this.$moment(this.maxDate, this.format).format(this.dayFormat)
+      return +this.$dayjs(this.maxDate, { jalali: this.isJalaliLocal })
+        .calendar(this.calendarLocal)
+        .locale(this.localeLocal)
+        .format(this.dayFormat)
     },
     years() {
       const years = []
@@ -448,14 +480,9 @@ export default {
         }
         return days
       } else {
-        const daysInMonth =
-          this.displayType === 'jalali'
-            ? this.$moment.jDaysInMonth(+this.year, +this.month - 1)
-            : this.$moment(
-                `${this.year}/${this.month}`,
-                `${this.yearFormat}/${this.monthFormat}`
-              ).daysInMonth()
-
+        const daysInMonth = this.$dayjs(`${this.year}/${this.month}`, {
+          jalali: this.isJalaliLocal,
+        }).daysInMonth()
         for (let i = 1; i <= daysInMonth; i++) {
           const value = i < 10 ? `0${i}` : i.toString()
           const isLessThanMin =
@@ -494,10 +521,12 @@ export default {
           this.month = null
           this.day = null
         } else {
-          const m = this.$moment(val, this.modelFormat)
-          this.year = m.format(this.yearFormat).toString()
-          this.month = m.format(this.monthFormat).toString()
-          this.day = m.format(this.dayFormat).toString()
+          const d = this.$dayjs(val, { jalali: this.isJalali })
+            .calendar(this.calendarLocal)
+            .locale(this.localeLocal)
+          this.year = d.format(this.yearFormat).toString()
+          this.month = d.format(this.monthFormat).toString()
+          this.day = d.format(this.dayFormat).toString()
         }
       },
     },
@@ -510,17 +539,18 @@ export default {
         const newDay = newVal?.day
         if (newYear && newMonth && newDay) {
           const newDate = `${newYear}/${newMonth}/${newDay}`
-          const m = this.$moment(
-            newDate,
-            `${this.yearFormat}/${this.monthFormat}/${this.dayFormat}`
-          )
-          if (!m.isValid()) {
+          const d = this.$dayjs(newDate, { jalali: this.isJalaliLocal })
+          if (!d.isValid()) {
             this.day = null
           } else {
-            const beforeM = this.$moment(this.minDate, this.format)
-            const afterM = this.$moment(this.maxDate, this.format)
-            const isBefore = m.isBefore(beforeM)
-            const isAfter = m.isAfter(afterM)
+            const beforeD = this.$dayjs(this.minDate, {
+              jalali: this.isJalaliLocal,
+            })
+            const afterD = this.$dayjs(this.maxDate, {
+              jalali: this.isJalaliLocal,
+            })
+            const isBefore = d.isBefore(beforeD)
+            const isAfter = d.isAfter(afterD)
             if (isBefore || isAfter) {
               this.showAlert = true
               await this.$nextTick()
@@ -529,7 +559,7 @@ export default {
               } else this.year = null
             } else {
               this.showAlert = false
-              this.$emit('input', m.format(this.modelFormat))
+              this.$emit('input', d.format(this.format))
             }
           }
         }
